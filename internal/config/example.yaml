@@ -1,0 +1,21 @@
+# stackwatch configuration file
+# Run: stackwatch watch --config internal/config/example.yaml
+
+# How often to poll each stack for drift (default: 60s)
+interval: 60s
+
+# Per-check timeout (default: 30s)
+timeout: 30s
+
+stacks:
+  # CloudFormation stack example
+  - name: my-production-stack
+    type: cloudformation
+    region: us-east-1
+    # Optional: AWS named profile from ~/.aws/credentials
+    profile: prod-account
+
+  # Terraform workspace example
+  - name: my-terraform-infra
+    type: terraform
+    work_dir: /path/to/terraform/workspace
