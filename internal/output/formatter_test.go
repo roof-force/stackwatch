@@ -74,6 +74,30 @@ func TestPrint_Error(t *testing.T) {
 	}
 }
 
+func TestPrint_Drifted_MultipleDetails(t *testing.T) {
+	var buf bytes.Buffer
+	f := NewFormatter(&buf, true)
+
+	f.Print(DriftResult{
+		StackName: "staging-stack",
+		Provider:  "terraform",
+		Status:    StatusDrifted,
+		DriftedAt: fixedTime(),
+		Details: []string{
+			"aws_s3_bucket.main: tags changed",
+			"aws_iam_role.worker: policy updated",
+		},
+	})
+
+	out := buf.String()
+	if !strings.Contains(out, "aws_s3_bucket.main") {
+		t.Errorf("expected first detail line in output, got: %s", out)
+	}
+	if !strings.Contains(out, "aws_iam_role.worker") {
+		t.Errorf("expected second detail line in output, got: %s", out)
+	}
+}
+
 func TestNewFormatter_NilWriter(t *testing.T) {
 	f := NewFormatter(nil, true)
 	if f == nil {
