@@ -8,8 +8,9 @@ import (
 )
 
 const (
-	colWidth = 30
-	sepLine  = "-"
+	colWidth  = 30
+	sepLine   = "-"
+	sepLength = 85
 )
 
 // TablePrinter renders drift results as an ASCII table.
@@ -22,9 +23,14 @@ func NewTablePrinter(out io.Writer) *TablePrinter {
 	return &TablePrinter{out: out}
 }
 
+// separator returns a horizontal rule for use in table borders.
+func (tp *TablePrinter) separator() string {
+	return strings.Repeat(sepLine, sepLength)
+}
+
 // PrintHeader writes the table header row.
 func (tp *TablePrinter) PrintHeader() {
-	sep := strings.Repeat(sepLine, 85)
+	sep := tp.separator()
 	fmt.Fprintln(tp.out, sep)
 	fmt.Fprintf(tp.out, "%-20s %-12s %-30s %-12s\n",
 		"TIMESTAMP", "PROVIDER", "STACK", "STATUS")
@@ -51,7 +57,7 @@ func (tp *TablePrinter) PrintSummary(results []DriftResult) {
 			drifted++
 		}
 	}
-	sep := strings.Repeat(sepLine, 85)
+	sep := tp.separator()
 	fmt.Fprintln(tp.out, sep)
 	fmt.Fprintf(tp.out, "Total: %d stacks checked, %d drifted\n", len(results), drifted)
 }
