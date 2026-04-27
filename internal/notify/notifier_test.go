@@ -94,3 +94,21 @@ func TestNewNotifier_Defaults(t *testing.T) {
 		t.Errorf("expected default threshold INFO, got %s", n.threshold)
 	}
 }
+
+func TestSend_MessageIncludedInOutput(t *testing.T) {
+	var buf bytes.Buffer
+	n := NewNotifier(WithWriter(&buf))
+
+	wantMessage := "drift detected on resource"
+	_ = n.Send(Event{
+		StackName: "msg-stack",
+		Provider:  "cloudformation",
+		Level:     LevelWarn,
+		Message:   wantMessage,
+		Timestamp: fixedTS,
+	})
+
+	if !strings.Contains(buf.String(), wantMessage) {
+		t.Errorf("expected message %q in output, got: %s", wantMessage, buf.String())
+	}
+}
